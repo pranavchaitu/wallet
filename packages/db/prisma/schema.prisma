@@ -8,20 +8,20 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
-  email             String?  @unique
-  name              String? 
-  number            String  @unique
+  id                Int                 @id @default(autoincrement())
+  email             String?             @unique
+  name              String?
+  number            String              @unique
   password          String
   OnRampTransaction OnRampTransaction[]
   Balance           Balance[]
 }
 
 model Merchant {
-  id          Int     @id @default(autoincrement())
-  email       String  @unique
-  name        String?
-  auth_type   AuthType   
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  auth_type AuthType
 }
 
 model OnRampTransaction {
@@ -36,11 +36,11 @@ model OnRampTransaction {
 }
 
 model Balance {
-  id      Int @id @default(autoincrement())
-  userId  Int @unique
-  amount  Int
-  locked  Int
-  user    User @relation(fields: [userId],references: [id])
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  amount Int
+  locked Int
+  user   User @relation(fields: [userId], references: [id])
 }
 
 enum AuthType {
