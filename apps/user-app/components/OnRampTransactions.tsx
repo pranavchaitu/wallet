@@ -1,4 +1,6 @@
 import { Card } from "@repo/ui/card"
+import prisma from "@repo/db/client"
+type StatusType = "Processing" | "Success" | "Failed"
 
 export const OnRampTransactions = ({
     transactions
@@ -20,20 +22,41 @@ export const OnRampTransactions = ({
     }
     return <Card title="Recent Transactions">
         <div className="pt-2">
-            {transactions.map(t => <div className="flex justify-between">
-                <div>
-                    <div className="text-sm">
-                        Received INR
+            {transactions.map(t => <div className="space-y-5 flex justify-between items-center">
+                <div className="flex">
+                    <div>
+                        <div className="text-sm">
+                            Received INR
+                        </div>
+                        <div className="text-slate-600 text-xs">
+                            {t.time.toDateString()}
+                        </div>
                     </div>
-                    <div className="text-slate-600 text-xs">
-                        {t.time.toDateString()}
+                    <div className="ml-2">
+                        <StatusButton type={t.status}/>
                     </div>
                 </div>
-                <div className="flex flex-col justify-center">
+                <div>
                     + Rs {t.amount / 100}
                 </div>
 
             </div>)}
         </div>
     </Card>
+}
+
+function StatusButton({ type } : { type : string }) {
+    if(type == "Processing") {
+        return <button className="rounded-full text-sm p-2 bg-orange-400">
+            { type }
+        </button>
+    } else if(type  == "Success") {
+        return <button className="rounded-full text-sm p-2 bg-green-400">
+            { type }
+        </button>
+    } else {
+        return <button className="rounded-full text-sm p-2 bg-red-400">
+            { type }
+        </button>
+    }
 }

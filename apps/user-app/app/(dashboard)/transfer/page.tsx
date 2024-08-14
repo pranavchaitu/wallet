@@ -12,6 +12,7 @@ async function getBalance() {
             userId: Number(session?.user?.id)
         }
     });
+    // await new Promise(t => setTimeout(t,3000))
     return {
         amount: balance?.amount || 0,
         locked: balance?.locked || 0
