@@ -4,44 +4,39 @@ import { authOptions } from "../../lib/auth";
 import prisma from "@repo/db/client";
 import { P2PTransactions } from "../../../components/p2pTransactions";
 
-async function getSentP2PTransactions() {
-    const session = await getServerSession(authOptions);
-    const txns = await prisma.p2pTransfer.findMany({
-        where: {
-            fromUserId: Number(session?.user?.id)
+async function getP2PTransactions(userId : number) {
+    const data = await prisma.user.findFirst({
+        where : {
+            id : userId
+        },
+        select : {
+            sentTransfers : {
+                select : {
+                    timestamp : true,
+                    fromUser : true,
+                    toUser : true,
+                    amount : true
+                }
+            },
+            receivedTransfers : {
+                select : {
+                    timestamp : true,
+                    fromUser : true,
+                    toUser : true,
+                    amount : true
+                }
+            },
         }
-    });
-    return txns.map(t => ({
-        time: t.timestamp,
-        userId : t.toUserId,
-        amount: t.amount,
-        type : "Sent"
-    }))
+    })
+    return data?.receivedTransfers.concat(data.sentTransfers).sort((a,b) => {
+        return b.timestamp.getTime() - a.timestamp.getTime()
+    })
 }
-
-async function getRecievedP2PTransactions() {
-    const session = await getServerSession(authOptions);
-    const txns = await prisma.p2pTransfer.findMany({
-        where: {
-            toUserId: Number(session?.user?.id)
-        }
-    });
-    return txns.map(t => ({
-        time: t.timestamp,
-        userId : t.fromUserId,
-        amount: t.amount,
-        type : "Received"
-    }))
-}
-
 
 export default async function () {
-    const sentTransactions = await getSentP2PTransactions()
-    const recievedTransactions = await getRecievedP2PTransactions()
-    const transactions = sentTransactions.concat(recievedTransactions)
-    transactions.sort((a,b) => {
-        return b.time.getTime() - a.time.getTime()
-    })
+    const session : any  = await getServerSession(authOptions)
+    const userId = Number(session?.user?.id)
+    const transactions = await getP2PTransactions(userId)
     return <div className="w-screen">
         <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold">
             Transfer
@@ -51,7 +46,7 @@ export default async function () {
                 <SendP2P />
             </div>
             <div>
-                <P2PTransactions transactions={transactions}/>
+                <P2PTransactions transactions={transactions!} userId={userId}/>
             </div>
         </div>
     </div>

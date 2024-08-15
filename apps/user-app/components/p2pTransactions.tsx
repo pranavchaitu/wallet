@@ -1,14 +1,22 @@
 import { Card } from "@repo/ui/card"
 
 export const P2PTransactions = ({
-    transactions
-}: {
+    transactions,
+    userId
+} : {
     transactions: {
-        time : Date,
+        timestamp : Date,
         amount: number,
-        type : string,
-        userId : number
-    }[]
+        fromUser : {
+          id : number,
+          name : string | null
+        },
+        toUser : {
+            id : number,
+            name : string | null
+        },
+    }[],
+    userId : number
 }) => {
     if (!transactions.length) {
         return <Card title="Recent Transactions">
@@ -23,19 +31,18 @@ export const P2PTransactions = ({
                 <div className="flex gap-3 items-center">
                     <div>
                         <div className="text-sm">
-                            {t.type} INR
+                            {t.toUser.id == userId ? "Received" : "Sent"} INR
                         </div>
                         <div className="text-slate-600 text-xs">
-                            {t.time.toLocaleString()}
+                            {t.timestamp.toLocaleString()}
                         </div>
                     </div>
-                    {/* number not id */}
                     <div className="text-sm font-semibold border bg-slate-50 rounded-full p-2">
-                        {t.type == "Received" ? "from" : "to"} user with {t.userId}
+                        {t.fromUser.id == userId ? `to ${t.toUser.name || "Anonymous"}`  : `from ${t.fromUser.name || "Anonymous"}`} 
                     </div>
                 </div>
                 <div>
-                    {t.type == "Received" ? "+" : "-" } Rs {t.amount / 100}
+                    {t.fromUser.id == userId ? "-" : "+" } Rs {t.amount / 100}
                 </div>
             </div>)}
         </div>
