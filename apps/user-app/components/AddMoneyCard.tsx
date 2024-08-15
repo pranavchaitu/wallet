@@ -18,6 +18,7 @@ export const AddMoney = () => {
     const [redirectUrl, setRedirectUrl] = useState(SUPPORTED_BANKS[0]?.redirectUrl);
     const [provider,setProvider] = useState(SUPPORTED_BANKS[0]?.name || "")
     const [amount,setAmount] = useState("");
+    const [loading,setLoading] = useState<boolean>(false)
 
     return <Card title="Add Money">
     <div className="w-full">
@@ -33,11 +34,14 @@ export const AddMoney = () => {
             value: x.name
         }))} />
         <div className="flex justify-center pt-4">
-            <Button onClick={async () => {
+            <Button Loading={loading} onClick={async () => {
+                setLoading(true)
                 await createOnRampTransaction(provider,amount)
+                setLoading(false)
+                // window.location.reload()
                 window.location.href = redirectUrl || "";
             }}>
-            Add Money
+                Add Money
             </Button>
         </div>
     </div>

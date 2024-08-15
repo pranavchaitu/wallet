@@ -31,7 +31,9 @@ async function getOnRampTransactions() {
         amount: t.amount,
         status: t.status,
         provider: t.provider
-    }))
+    })).sort((a,b) => {
+        return b.time.getTime() - a.time.getTime() 
+    })
 }
 
 export default async function() {

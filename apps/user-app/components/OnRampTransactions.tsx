@@ -29,7 +29,7 @@ export const OnRampTransactions = ({
                             Received INR
                         </div>
                         <div className="text-slate-600 text-xs">
-                            {t.time.toDateString()}
+                            {t.time.toLocaleString()}
                         </div>
                     </div>
                     <div className="ml-2">

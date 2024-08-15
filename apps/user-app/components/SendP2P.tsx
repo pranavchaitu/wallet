@@ -19,11 +19,16 @@ export function SendP2P() {
         <div className="flex justify-center pt-4">
             <Button Loading={loading} onClick={() => {
                 setLoading(true)
-                p2pTransfer(number,Number(amount) * 100)
+                try {
+                    p2pTransfer(number,Number(amount) * 100)
                     .then(() => {
                         setLoading(false)
-                        window.location.href = '/transfer'
-                    })
+                        // router.push('/transfer')
+                        window.location.reload()
+                    })                    
+                } catch (error) {
+                    console.log("error handled");
+                }
             }} > 
             Send
             </Button>

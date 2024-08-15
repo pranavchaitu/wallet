@@ -3,8 +3,15 @@
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import { Prisma } from "@prisma/client";
 
+// MYTODO - no negative input check
 export async function p2pTransfer(to : string,amount : number) {
+    if(amount <= 0) {
+        return {
+            message : "Input right amount"
+        }
+    }
     const session = await getServerSession(authOptions)
     const from = session.user.id
     if(!from) {
@@ -24,6 +31,8 @@ export async function p2pTransfer(to : string,amount : number) {
     }
     await prisma.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`;
+        // prevents sql injection
+        // await tx.$queryRaw(Prisma.sql`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`);
         const fromBalance = await tx.balance.findUnique({
             where : {
                 userId : Number(from)
@@ -37,7 +46,7 @@ export async function p2pTransfer(to : string,amount : number) {
                 userId : Number(from)
             },
             data : {
-                amount : {
+                amount : {  
                     decrement : amount
                 }
             }
@@ -52,5 +61,16 @@ export async function p2pTransfer(to : string,amount : number) {
                 }
             }
         })
+        await tx.p2pTransfer.create({
+            data : {
+                fromUserId : Number(from),
+                toUserId : toUser.id,
+                timestamp : new Date(),
+                amount,
+            }
+        })
+        return {
+            message : "Paytment successful"
+        }
     })
 }

@@ -6,7 +6,7 @@ import { Spinner } from "./spinner";
 interface ButtonProps {
   children: ReactNode;
   onClick: () => void;
-  Loading : boolean
+  Loading? : boolean
 }
 
 export const Button = ({ onClick, children,Loading }: ButtonProps) => {

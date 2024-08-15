@@ -3,6 +3,7 @@
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import axios from "axios";
 
 export async function createOnRampTransaction(provider : string, amount : string) {
     const session = await getServerSession(authOptions)
@@ -24,7 +25,9 @@ export async function createOnRampTransaction(provider : string, amount : string
         }
     })
     // MYTODO - should done in separate bank server lets dupify it and its page
-    // const res = await axios.post('http://localhost:3003/hdfcWebhook',{
+    // also check the status to be "Proccessing only" if(Success) no transaction again 
+
+    // await axios.post('http://localhost:3003/hdfcWebhook',{
     //     token,
     //     user_identifier : userId,
     //     amount : (Number(amount) * 100).toString()
