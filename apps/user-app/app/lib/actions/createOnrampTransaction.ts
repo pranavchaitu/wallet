@@ -27,11 +27,11 @@ export async function createOnRampTransaction(provider : string, amount : string
     // MYTODO - should done in separate bank server lets dupify it and its page
     // also check the status to be "Proccessing only" if(Success) no transaction again 
 
-    // await axios.post('http://localhost:3003/hdfcWebhook',{
-    //     token,
-    //     user_identifier : userId,
-    //     amount : (Number(amount) * 100).toString()
-    // })
+    await axios.post('http://localhost:3003/hdfcWebhook',{
+        token,
+        user_identifier : userId,
+        amount
+    })
     // console.log(res);
     return {
         message : "Done"

@@ -1,5 +1,6 @@
 import express from "express";
 import db from "@repo/db/client";
+import prisma from "@repo/db/client";
 const app = express();
 
 app.use(express.json())
@@ -18,6 +19,11 @@ app.post("/hdfcWebhook", async (req, res) => {
     };
 
     try {
+        if(Number(paymentInformation.amount) < 0) {
+            return res.status(400).json({
+                msg : "error positive amount"
+            });
+        }
         await db.$transaction([
             db.balance.updateMany({
                 where: {
@@ -26,7 +32,7 @@ app.post("/hdfcWebhook", async (req, res) => {
                 data: {
                     amount: {
                         // You can also get this from your DB
-                        increment: Number(paymentInformation.amount)
+                        increment: Number(paymentInformation.amount) * 100
                     }
                 }
             }),
@@ -49,7 +55,6 @@ app.post("/hdfcWebhook", async (req, res) => {
             message: "Error while processing webhook"
         })
     }
-
 })
 
 app.listen(3003);

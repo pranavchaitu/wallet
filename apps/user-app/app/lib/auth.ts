@@ -38,8 +38,8 @@ export const authOptions = {
                     data: {
                         number: credentials.phone,
                         name: credentials.name,
-                        password: hashedPassword
-                    }
+                        password: hashedPassword,
+                    }                    
                 });
             
                 return {
