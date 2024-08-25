@@ -39,4 +39,4 @@ jobs:
           sudo docker pull pranavchaitu/wallet:latest
           sudo docker stop web-app || true
           sudo docker rm web-app || true
-          sudo docker run -d --name web-app -p 3005:3001 pranavchaitu/wallet:latest
+          sudo docker run -e DATABASE_URL=${{ secrets.DB_URL }} -d --name web-app -p 3000:3000 pranavchaitu/wallet:latest
